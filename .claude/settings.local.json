@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(alembic init:*)",
+      "Bash(test:*)",
+      "Bash(cp:*)",
+      "Bash(alembic revision:*)",
+      "Bash(alembic upgrade:*)",
+      "Bash(sqlite3:*)",
+      "Bash(python:*)",
+      "Bash(alembic current:*)",
+      "Bash(python3:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)"
+    ]
+  }
+}

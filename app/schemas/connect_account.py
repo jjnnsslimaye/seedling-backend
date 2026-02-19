@@ -1,0 +1,26 @@
+from typing import Optional
+from pydantic import BaseModel
+
+
+class ConnectAccountResponse(BaseModel):
+    """Schema for connect account creation response."""
+
+    connect_account_id: str
+    onboarding_url: str
+    message: str
+
+
+class ConnectAccountStatusResponse(BaseModel):
+    """Schema for connect account status response."""
+
+    status: str  # "not_started", "pending", "active"
+    onboarding_complete: bool
+    charges_enabled: bool = False
+    payouts_enabled: bool = False
+    connect_account_id: Optional[str] = None
+
+
+class RefreshLinkResponse(BaseModel):
+    """Schema for refresh onboarding link response."""
+
+    onboarding_url: str

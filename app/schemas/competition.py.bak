@@ -1,0 +1,91 @@
+from __future__ import annotations
+from datetime import datetime
+from decimal import Decimal
+from typing import Any
+from pydantic import BaseModel, ConfigDict, Field
+from app.models.competition import CompetitionStatus
+
+
+class UserInfo(BaseModel):
+    """Simplified user info for nested responses."""
+
+    id: int
+    username: str
+    email: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CompetitionBase(BaseModel):
+    """Base competition schema with common fields."""
+
+    title: str = Field(..., max_length=255)
+    description: str
+    domain: str = Field(..., max_length=100)
+    entry_fee: Decimal = Field(..., ge=0)
+    max_entries: int = Field(..., gt=0)
+    deadline: datetime
+    open_date: datetime
+    judging_sla_days: int = Field(..., gt=0)
+    rubric: dict[str, Any]
+    prize_structure: dict[str, Any]
+    platform_fee_percentage: Decimal = Field(..., ge=0, le=100)
+
+
+class CompetitionCreate(CompetitionBase):
+    """Schema for creating a new competition."""
+
+    pass
+
+
+class CompetitionUpdate(BaseModel):
+    """Schema for updating a competition. All fields are optional."""
+
+    title: str | None = Field(None, max_length=255)
+    description: str | None = None
+    domain: str | None = Field(None, max_length=100)
+    entry_fee: Decimal | None = Field(None, ge=0)
+    max_entries: int | None = Field(None, gt=0)
+    deadline: datetime | None = None
+    open_date: datetime | None = None
+    judging_sla_days: int | None = Field(None, gt=0)
+    rubric: dict[str, Any] | None = None
+    prize_structure: dict[str, Any] | None = None
+    platform_fee_percentage: Decimal | None = Field(None, ge=0, le=100)
+    status: CompetitionStatus | None = None
+
+
+class CompetitionResponse(CompetitionBase):
+    """Schema for competition API responses with full details."""
+
+    id: int
+    prize_pool: Decimal
+    current_entries: int
+    status: CompetitionStatus
+    created_by: int
+    created_at: datetime
+    updated_at: datetime
+    creator: UserInfo
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CompetitionListResponse(BaseModel):
+    """Simplified schema for competition listings without full rubric/prize_structure."""
+
+    id: int
+    title: str
+    description: str
+    domain: str
+    entry_fee: Decimal
+    prize_pool: Decimal
+    max_entries: int
+    current_entries: int
+    deadline: datetime
+    open_date: datetime
+    status: CompetitionStatus
+    created_by: int
+    created_at: datetime
+    creator: UserInfo
+
+    model_config = ConfigDict(from_attributes=True)
