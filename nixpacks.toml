@@ -1,0 +1,2 @@
+[phases.setup]
+aptPkgs = ["libjpeg-dev", "zlib1g-dev", "libpng-dev"]
