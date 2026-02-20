@@ -26,3 +26,9 @@ Pillow==10.2.0
 
 # AWS S3
 boto3==1.34.34
+
+# Payment Processing
+stripe==8.0.0
+
+# Email Service
+sendgrid==6.11.0
