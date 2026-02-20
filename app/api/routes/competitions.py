@@ -534,14 +534,15 @@ async def upload_competition_image(
     Uploads to S3 and updates competition record.
     """
     # Debug logging
-    print("=" * 80)
-    print("=== IMAGE UPLOAD ENDPOINT CALLED ===")
-    print(f"Competition ID: {competition_id}")
-    print(f"File: {file.filename if file else 'No file'}")
-    print(f"File content type: {file.content_type if file else 'N/A'}")
-    print(f"User: {current_user.email}")
-    print(f"User role: {current_user.role}")
-    print("=" * 80)
+    if settings.debug:
+        print("=" * 80)
+        print("=== IMAGE UPLOAD ENDPOINT CALLED ===")
+        print(f"Competition ID: {competition_id}")
+        print(f"File: {file.filename if file else 'No file'}")
+        print(f"File content type: {file.content_type if file else 'N/A'}")
+        print(f"User: {current_user.email}")
+        print(f"User role: {current_user.role}")
+        print("=" * 80)
 
     # Fetch competition
     result = await db.execute(
@@ -570,10 +571,12 @@ async def upload_competition_image(
     file_size = len(contents)
     max_size = 5 * 1024 * 1024  # 5MB in bytes
 
-    print(f"File size: {file_size / (1024 * 1024):.2f}MB")
+    if settings.debug:
+        print(f"File size: {file_size / (1024 * 1024):.2f}MB")
 
     if file_size > max_size:
-        print(f"ERROR: File too large!")
+        if settings.debug:
+            print(f"ERROR: File too large!")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"File too large. Maximum size is 5MB, got {file_size / (1024 * 1024):.2f}MB.",
@@ -587,7 +590,8 @@ async def upload_competition_image(
         "image/webp": "webp",
     }
     extension = ext_map[file.content_type]
-    print(f"File extension: {extension}")
+    if settings.debug:
+        print(f"File extension: {extension}")
 
     # Delete old image if exists
     if competition.image_key:
@@ -599,8 +603,9 @@ async def upload_competition_image(
 
     # Upload new image to S3
     s3_key = f"competitions/{competition_id}/cover-image.{extension}"
-    print(f"S3 key: {s3_key}")
-    print(f"S3 bucket: {settings.aws_s3_bucket}")
+    if settings.debug:
+        print(f"S3 key: {s3_key}")
+        print(f"S3 bucket: {settings.aws_s3_bucket}")
 
     try:
         s3_client.put_object(
@@ -609,10 +614,12 @@ async def upload_competition_image(
             Body=contents,
             ContentType=file.content_type,
         )
-        print(f"✓ Successfully uploaded to S3: {s3_key}")
+        if settings.debug:
+            print(f"✓ Successfully uploaded to S3: {s3_key}")
         logger.info(f"Uploaded competition image to S3: {s3_key}")
     except Exception as e:
-        print(f"✗ Failed to upload to S3: {e}")
+        if settings.debug:
+            print(f"✗ Failed to upload to S3: {e}")
         logger.error(f"Failed to upload competition image to S3: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -622,12 +629,14 @@ async def upload_competition_image(
     # Update competition record with image_key only (URL generated on GET requests)
     competition.image_key = s3_key
     competition.image_url = None  # Don't store URL in DB - will be generated fresh on each GET
-    print(f"Updating competition {competition_id} with image_key")
+    if settings.debug:
+        print(f"Updating competition {competition_id} with image_key")
 
     await db.commit()
     await db.refresh(competition)
-    print(f"✓ Competition updated successfully")
-    print("=" * 80)
+    if settings.debug:
+        print(f"✓ Competition updated successfully")
+        print("=" * 80)
 
     # Fetch with relationships
     result = await db.execute(
@@ -641,9 +650,11 @@ async def upload_competition_image(
     if competition.image_key:
         try:
             competition.image_url = generate_presigned_url(competition.image_key, expiration=604800)
-            print(f"✓ Generated presigned URL for response: {competition.image_url[:50]}...")
+            if settings.debug:
+                print(f"✓ Generated presigned URL for response: {competition.image_url[:50]}...")
         except Exception as e:
-            print(f"✗ Failed to generate presigned URL: {e}")
+            if settings.debug:
+                print(f"✗ Failed to generate presigned URL: {e}")
             logger.warning(f"Failed to generate presigned URL: {e}")
             competition.image_url = None
 

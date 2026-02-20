@@ -26,6 +26,7 @@ interface Winning {
     id: number;
     title: string;
     domain: string;
+    image_url?: string;
   } | null;
   submission: {
     id: number;

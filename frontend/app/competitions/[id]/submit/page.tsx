@@ -353,7 +353,7 @@ function SubmitContent() {
       // Check if payment is required
       const response = submission as any;
 
-      if (competition.entry_fee > 0) {
+      if (competition?.entry_fee && competition.entry_fee > 0) {
         // Redirect to payment page (payment intent will be created when user clicks Pay Now)
         const paymentUrl = `/competitions/${competitionId}/submit/payment?submission_id=${response.id}`;
         console.log('Redirecting to payment page:', paymentUrl);

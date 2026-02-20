@@ -23,7 +23,13 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     # CORS
-    allowed_origins: list[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:8000"]
+    allowed_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:8000",
+        "https://tryseedling.live",
+        "https://www.tryseedling.live"
+    ]
 
     # Frontend URL for redirects
     frontend_url: str = "http://localhost:3000"

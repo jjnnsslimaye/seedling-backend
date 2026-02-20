@@ -112,7 +112,7 @@ function CompetitionCard({
 
           {/* Domain tags - bottom-left (supports comma-separated domains) */}
           <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
-            {competition.domain.split(',').map((domain, index) => (
+            {competition.domain.split(',').map((domain: string, index: number) => (
               <span
                 key={index}
                 className="inline-block px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-700 shadow-sm"

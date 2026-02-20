@@ -23,27 +23,32 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     """Login endpoint that returns a JWT token."""
-    print(f"DEBUG: Login attempt with username/email: '{form_data.username}'")
+    if settings.debug:
+        print(f"DEBUG: Login attempt with username/email: '{form_data.username}'")
 
     # Try username first (case-insensitive)
     result = await db.execute(
         select(User).where(func.lower(User.username) == form_data.username.lower())
     )
     user = result.scalar_one_or_none()
-    print(f"DEBUG: User found by username: {user is not None}")
+    if settings.debug:
+        print(f"DEBUG: User found by username: {user is not None}")
 
     # If not found by username, try email (case-insensitive)
     if not user:
-        print(f"DEBUG: Trying email lookup (case-insensitive)...")
+        if settings.debug:
+            print(f"DEBUG: Trying email lookup (case-insensitive)...")
         result = await db.execute(
             select(User).where(func.lower(User.email) == form_data.username.lower())
         )
         user = result.scalar_one_or_none()
-        print(f"DEBUG: User found by email: {user is not None}")
+        if settings.debug:
+            print(f"DEBUG: User found by email: {user is not None}")
 
     # Now check if user exists
     if not user:
-        print(f"DEBUG: No user found with username or email: '{form_data.username}'")
+        if settings.debug:
+            print(f"DEBUG: No user found with username or email: '{form_data.username}'")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username/email or password",
@@ -51,25 +56,30 @@ async def login(
         )
 
     # Verify password
-    print(f"DEBUG: Verifying password for user: {user.username}")
+    if settings.debug:
+        print(f"DEBUG: Verifying password for user: {user.username}")
     if not verify_password(form_data.password, user.hashed_password):
-        print(f"DEBUG: Password verification failed for user: {user.username}")
+        if settings.debug:
+            print(f"DEBUG: Password verification failed for user: {user.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username/email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    print(f"DEBUG: Password verified successfully for user: {user.username}")
+    if settings.debug:
+        print(f"DEBUG: Password verified successfully for user: {user.username}")
 
     if not user.is_active:
-        print(f"DEBUG: User is inactive: {user.username}")
+        if settings.debug:
+            print(f"DEBUG: User is inactive: {user.username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user",
         )
 
-    print(f"DEBUG: User is active, generating token for user: {user.username}, role: {user.role.value}")
+    if settings.debug:
+        print(f"DEBUG: User is active, generating token for user: {user.username}, role: {user.role.value}")
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     access_token = create_access_token(
         data={
@@ -79,7 +89,8 @@ async def login(
         expires_delta=access_token_expires,
     )
 
-    print(f"DEBUG: Login successful for user: {user.username}")
+    if settings.debug:
+        print(f"DEBUG: Login successful for user: {user.username}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -127,7 +138,8 @@ async def request_password_reset(
         )
     except Exception as e:
         # Log error but don't reveal to user
-        print(f"ERROR: Failed to send password reset email: {str(e)}")
+        if settings.debug:
+            print(f"ERROR: Failed to send password reset email: {str(e)}")
 
     return {"message": "If that email exists, a reset link has been sent"}
 

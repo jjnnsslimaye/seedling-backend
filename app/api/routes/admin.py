@@ -35,8 +35,9 @@ logger = logging.getLogger(__name__)
 # Configure Stripe
 stripe.api_key = settings.stripe_secret_key
 
-# Enable Stripe debug logging
-stripe.log = 'debug'
+# Enable Stripe debug logging (debug mode only)
+if settings.debug:
+    stripe.log = 'debug'
 stripe.enable_telemetry = False
 
 # Also set up basic logging to see Stripe's actual requests
@@ -900,7 +901,8 @@ async def distribute_prizes(
                 )
         except stripe.error.StripeError as e:
             # Log warning but don't block if balance check fails
-            print(f"Warning: Could not verify platform balance: {e}")
+            if settings.debug:
+                print(f"Warning: Could not verify platform balance: {e}")
 
     # Initialize result lists
     successful_payouts = []
@@ -1237,11 +1239,12 @@ async def test_transfer(
     Attempts a simple transfer and returns detailed debugging information.
     This endpoint should be removed once debugging is complete.
     """
-    print("=" * 50)
-    print("ATTEMPTING TEST TRANSFER")
-    print(f"Amount: {request.amount}")
-    print(f"Destination: {request.destination}")
-    print(f"Idempotency Key: {request.idempotency_key}")
+    if settings.debug:
+        print("=" * 50)
+        print("ATTEMPTING TEST TRANSFER")
+        print(f"Amount: {request.amount}")
+        print(f"Destination: {request.destination}")
+        print(f"Idempotency Key: {request.idempotency_key}")
 
     try:
         transfer_params = {
@@ -1255,12 +1258,14 @@ async def test_transfer(
             transfer_params["idempotency_key"] = request.idempotency_key
 
         transfer = stripe.Transfer.create(**transfer_params)
-        print("SUCCESS!")
-        print(f"Transfer ID: {transfer.id}")
+        if settings.debug:
+            print("SUCCESS!")
+            print(f"Transfer ID: {transfer.id}")
         return {"success": True, "transfer": transfer}
 
     except stripe.error.StripeError as e:
-        print("FAILED!")
-        print(f"Error: {e}")
-        print(f"Error dict: {e.json_body}")
+        if settings.debug:
+            print("FAILED!")
+            print(f"Error: {e}")
+            print(f"Error dict: {e.json_body}")
         return {"success": False, "error": str(e), "details": e.json_body}

@@ -19,10 +19,12 @@ import { ProtectedRoute } from '@/components/auth';
 import { Card, Button, Alert, Loading } from '@/components/ui';
 
 // Debug environment variables
-console.log('Environment check:');
-console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
-console.log('Stripe Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-console.log('Stripe Key length:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.length);
+if (process.env.NODE_ENV === 'development') {
+  console.log('Environment check:');
+  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Stripe Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+  console.log('Stripe Key length:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.length);
+}
 
 // Initialize Stripe
 const stripePromise = loadStripe(
@@ -67,15 +69,19 @@ function PaymentForm({ submissionId, competition }: PaymentFormProps) {
     setProcessing(true);
     setError('');
 
-    console.log('=== PAYMENT SUBMISSION DEBUG ===');
-    console.log('Stripe loaded:', !!stripe);
-    console.log('Elements loaded:', !!elements);
-    console.log('Submission ID:', submissionId);
-    console.log('Competition ID:', competitionId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== PAYMENT SUBMISSION DEBUG ===');
+      console.log('Stripe loaded:', !!stripe);
+      console.log('Elements loaded:', !!elements);
+      console.log('Submission ID:', submissionId);
+      console.log('Competition ID:', competitionId);
+    }
 
     try {
       // Step 1: Create payment intent when Pay Now clicked
-      console.log('Creating payment intent...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Creating payment intent...');
+      }
       const token = localStorage.getItem('token');
       const intentResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/submissions/${submissionId}/create-payment-intent`,
@@ -94,7 +100,9 @@ function PaymentForm({ submissionId, competition }: PaymentFormProps) {
       }
 
       const { client_secret } = await intentResponse.json();
-      console.log('Payment intent created successfully');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Payment intent created successfully');
+      }
 
       // Step 2: Get card element
       const cardElement = elements.getElement(CardElement);
@@ -103,7 +111,9 @@ function PaymentForm({ submissionId, competition }: PaymentFormProps) {
       }
 
       // Step 3: Confirm payment with card details
-      console.log('Confirming payment...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Confirming payment...');
+      }
       const { error, paymentIntent } = await stripe.confirmCardPayment(
         client_secret,
         {
@@ -121,11 +131,15 @@ function PaymentForm({ submissionId, competition }: PaymentFormProps) {
       }
 
       // Step 4: Success - redirect to success page
-      console.log('Payment successful:', paymentIntent);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Payment successful:', paymentIntent);
+      }
       router.push(`/competitions/${competitionId}/submit/success?submission_id=${submissionId}`);
 
     } catch (err: any) {
-      console.error('Payment exception:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Payment exception:', err);
+      }
       setError(err.message || 'An unexpected error occurred');
       setProcessing(false);
     }
@@ -204,7 +218,9 @@ function PaymentForm({ submissionId, competition }: PaymentFormProps) {
                           },
                         }}
                         onReady={() => {
-                          console.log('CardElement is ready');
+                          if (process.env.NODE_ENV === 'development') {
+                            console.log('CardElement is ready');
+                          }
                           setReady(true);
                         }}
                       />

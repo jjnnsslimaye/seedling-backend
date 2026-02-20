@@ -34,15 +34,16 @@ def create_application() -> FastAPI:
         expose_headers=["*"],  # Expose all response headers
     )
 
-    # Log CORS configuration
-    print("=" * 80)
-    print("CORS Configuration:")
-    print(f"  Allowed Origins: {settings.allowed_origins}")
-    print(f"  Allow Credentials: True")
-    print(f"  Allow Methods: *")
-    print(f"  Allow Headers: *")
-    print(f"  Expose Headers: *")
-    print("=" * 80)
+    # Log CORS configuration (debug mode only)
+    if settings.debug:
+        print("=" * 80)
+        print("CORS Configuration:")
+        print(f"  Allowed Origins: {settings.allowed_origins}")
+        print(f"  Allow Credentials: True")
+        print(f"  Allow Methods: *")
+        print(f"  Allow Headers: *")
+        print(f"  Expose Headers: *")
+        print("=" * 80)
 
     application.include_router(health.router, tags=["Health"])
     application.include_router(

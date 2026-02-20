@@ -111,21 +111,23 @@ function DashboardContent() {
   const error = submissionsError || winningsError;
 
   // Debug logging
-  console.log('Dashboard Data:', {
-    totalSubmissions: submissions.length,
-    submissions,
-    winnings,
-  });
-
-  // Debug competition images
-  submissions.forEach((submission: Submission, index: number) => {
-    console.log(`Submission ${index + 1}:`, {
-      title: submission.title,
-      competition: submission.competition?.title,
-      imageUrl: submission.competition?.image_url,
-      hasImage: !!submission.competition?.image_url,
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Dashboard Data:', {
+      totalSubmissions: submissions.length,
+      submissions,
+      winnings,
     });
-  });
+
+    // Debug competition images
+    submissions.forEach((submission: Submission, index: number) => {
+      console.log(`Submission ${index + 1}:`, {
+        title: submission.title,
+        competition: submission.competition?.title,
+        imageUrl: submission.competition?.image_url,
+        hasImage: !!submission.competition?.image_url,
+      });
+    });
+  }
 
   // Helper function to get place text with ordinal suffix
   const getPlaceText = (placement: string | number): string => {
@@ -179,14 +181,16 @@ function DashboardContent() {
     return compStatus === 'complete';
   });
 
-  console.log('Categorized Submissions:', {
-    drafts: draftSubmissions.length,
-    active: activeSubmissions.length,
-    completed: completedSubmissions.length,
-    draftSubmissions,
-    activeSubmissions,
-    completedSubmissions,
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Categorized Submissions:', {
+      drafts: draftSubmissions.length,
+      active: activeSubmissions.length,
+      completed: completedSubmissions.length,
+      draftSubmissions,
+      activeSubmissions,
+      completedSubmissions,
+    });
+  }
 
   // Calculate stats
   const totalSubmissions = submissions.length;
@@ -201,12 +205,14 @@ function DashboardContent() {
     .filter((w: UserWinning) => w.status === 'completed' || w.status === 'COMPLETED')
     .reduce((sum: number, w: UserWinning) => sum + w.amount, 0);
 
-  console.log('Stats:', {
-    totalSubmissions,
-    activeCompetitions,
-    totalWinnings,
-    uniqueActiveCompetitionIds: Array.from(uniqueActiveCompetitionIds),
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Stats:', {
+      totalSubmissions,
+      activeCompetitions,
+      totalWinnings,
+      uniqueActiveCompetitionIds: Array.from(uniqueActiveCompetitionIds),
+    });
+  }
 
   if (isLoading) {
     return (
@@ -331,7 +337,7 @@ function DashboardContent() {
             count={draftSubmissions.length}
             isExpanded={expandedSections.drafts}
             onToggle={() => setExpandedSections(prev => ({ ...prev, drafts: !prev.drafts }))}
-            badgeColor="brand"
+            badgeColor="blue"
             emptyMessage="You have no draft submissions"
           >
             <div className="space-y-4">

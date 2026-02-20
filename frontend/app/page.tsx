@@ -60,7 +60,6 @@ export default function HomePage() {
                 animationData={seedlingAnimation}
                 loop={true}
                 autoplay={true}
-                speed={0.35}
                 style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
               />
             </div>

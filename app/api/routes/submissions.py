@@ -20,9 +20,11 @@ from app.schemas.submission import (
 from app.core.security import get_current_user
 from app.core.stripe_service import create_payment_intent, get_payment_intent
 from app.core.s3_service import upload_video, generate_presigned_url, delete_file
+from app.config import get_settings
 import stripe
 
 logger = logging.getLogger(__name__)
+settings = get_settings()
 
 router = APIRouter()
 
@@ -828,7 +830,8 @@ async def upload_submission_video(
                         delete_file(old_s3_key)
                     except Exception as e:
                         # Log error but don't fail the upload if old file doesn't exist
-                        print(f"Warning: Failed to delete old video {old_s3_key}: {str(e)}")
+                        if settings.debug:
+                            print(f"Warning: Failed to delete old video {old_s3_key}: {str(e)}")
                 break
 
     # Upload video to S3
