@@ -44,6 +44,5 @@ async def get_db() -> AsyncSession:
 
 
 async def init_db():
-    """Initialize database tables."""
-    async with engine.begin() as conn:
-        await conn.run_sync(lambda conn: Base.metadata.create_all(conn, checkfirst=True))
+    """Initialize database tables. Schema managed by Alembic migrations."""
+    pass
