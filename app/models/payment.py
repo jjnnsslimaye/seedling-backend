@@ -41,12 +41,12 @@ class Payment(Base):
 
     # Payment type and status
     type: Mapped[PaymentType] = mapped_column(
-        Enum(PaymentType),
+        Enum(PaymentType, create_type=False),
         nullable=False,
         index=True
     )
     status: Mapped[PaymentStatus] = mapped_column(
-        Enum(PaymentStatus),
+        Enum(PaymentStatus, create_type=False),
         default=PaymentStatus.PENDING,
         nullable=False,
         index=True
