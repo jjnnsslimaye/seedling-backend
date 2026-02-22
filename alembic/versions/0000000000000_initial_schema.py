@@ -21,12 +21,42 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # ### Create all tables from scratch ###
 
-    # Create enum types using IF NOT EXISTS for idempotency
-    op.execute("CREATE TYPE IF NOT EXISTS userrole AS ENUM ('founder', 'judge', 'admin')")
-    op.execute("CREATE TYPE IF NOT EXISTS competitionstatus AS ENUM ('draft', 'upcoming', 'active', 'closed', 'judging', 'complete')")
-    op.execute("CREATE TYPE IF NOT EXISTS submissionstatus AS ENUM ('draft', 'pending_payment', 'submitted', 'under_review', 'winner', 'not_selected', 'rejected')")
-    op.execute("CREATE TYPE IF NOT EXISTS paymenttype AS ENUM ('entry_fee', 'prize_payout', 'refund')")
-    op.execute("CREATE TYPE IF NOT EXISTS paymentstatus AS ENUM ('pending', 'completed', 'failed', 'refunded')")
+    # Create enum types with exception handling for idempotency
+    op.execute("""
+    DO $$ BEGIN
+        CREATE TYPE userrole AS ENUM ('founder', 'judge', 'admin');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+""")
+    op.execute("""
+    DO $$ BEGIN
+        CREATE TYPE competitionstatus AS ENUM ('draft', 'upcoming', 'active', 'closed', 'judging', 'complete');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+""")
+    op.execute("""
+    DO $$ BEGIN
+        CREATE TYPE submissionstatus AS ENUM ('draft', 'pending_payment', 'submitted', 'under_review', 'winner', 'not_selected', 'rejected');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+""")
+    op.execute("""
+    DO $$ BEGIN
+        CREATE TYPE paymenttype AS ENUM ('entry_fee', 'prize_payout', 'refund');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+""")
+    op.execute("""
+    DO $$ BEGIN
+        CREATE TYPE paymentstatus AS ENUM ('pending', 'completed', 'failed', 'refunded');
+    EXCEPTION
+        WHEN duplicate_object THEN null;
+    END $$;
+""")
 
     # 1. Create users table
     op.create_table(
