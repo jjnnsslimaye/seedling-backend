@@ -19,26 +19,11 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # SQLite doesn't support ALTER COLUMN, so we use batch operations
-    with op.batch_alter_table('submissions', schema=None) as batch_op:
-        batch_op.alter_column('status',
-                   existing_type=sa.VARCHAR(length=12),
-                   type_=sa.Enum('DRAFT', 'PENDING_PAYMENT', 'SUBMITTED', 'UNDER_REVIEW', 'WINNER', 'REJECTED', name='submissionstatus'),
-                   existing_nullable=False)
-        batch_op.alter_column('judge_feedback',
-                   existing_type=sa.TEXT(),
-                   type_=sa.JSON(),
-                   existing_nullable=True)
+    # No-op: submissions.status and judge_feedback already created with correct types in initial schema (0000000000000)
+    # status already created as Enum, judge_feedback already created as JSON
+    pass
 
 
 def downgrade() -> None:
-    # SQLite doesn't support ALTER COLUMN, so we use batch operations
-    with op.batch_alter_table('submissions', schema=None) as batch_op:
-        batch_op.alter_column('judge_feedback',
-                   existing_type=sa.JSON(),
-                   type_=sa.TEXT(),
-                   existing_nullable=True)
-        batch_op.alter_column('status',
-                   existing_type=sa.Enum('DRAFT', 'PENDING_PAYMENT', 'SUBMITTED', 'UNDER_REVIEW', 'WINNER', 'REJECTED', name='submissionstatus'),
-                   type_=sa.VARCHAR(length=12),
-                   existing_nullable=False)
+    # No-op: cannot alter column types as they're part of initial schema
+    pass

@@ -19,10 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column('competitions', sa.Column('image_key', sa.String(length=255), nullable=True))
-    op.add_column('competitions', sa.Column('image_url', sa.Text(), nullable=True))
+    # No-op: image_key and image_url columns already created in initial schema (0000000000000)
+    pass
 
 
 def downgrade() -> None:
-    op.drop_column('competitions', 'image_url')
-    op.drop_column('competitions', 'image_key')
+    # No-op: cannot drop image columns as they're part of initial schema
+    pass
