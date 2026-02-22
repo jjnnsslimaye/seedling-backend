@@ -21,12 +21,12 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # ### Create all tables from scratch ###
 
-    # Create enum types
-    sa.Enum('FOUNDER', 'JUDGE', 'ADMIN', name='userrole').create(op.get_bind(), checkfirst=True)
-    sa.Enum('DRAFT', 'UPCOMING', 'ACTIVE', 'CLOSED', 'JUDGING', 'COMPLETE', name='competitionstatus').create(op.get_bind(), checkfirst=True)
-    sa.Enum('DRAFT', 'PENDING_PAYMENT', 'SUBMITTED', 'UNDER_REVIEW', 'WINNER', 'NOT_SELECTED', 'REJECTED', name='submissionstatus').create(op.get_bind(), checkfirst=True)
-    sa.Enum('ENTRY_FEE', 'PRIZE_PAYOUT', 'REFUND', name='paymenttype').create(op.get_bind(), checkfirst=True)
-    sa.Enum('PENDING', 'COMPLETED', 'FAILED', 'REFUNDED', name='paymentstatus').create(op.get_bind(), checkfirst=True)
+    # Create enum types using IF NOT EXISTS for idempotency
+    op.execute("CREATE TYPE IF NOT EXISTS userrole AS ENUM ('founder', 'judge', 'admin')")
+    op.execute("CREATE TYPE IF NOT EXISTS competitionstatus AS ENUM ('draft', 'upcoming', 'active', 'closed', 'judging', 'complete')")
+    op.execute("CREATE TYPE IF NOT EXISTS submissionstatus AS ENUM ('draft', 'pending_payment', 'submitted', 'under_review', 'winner', 'not_selected', 'rejected')")
+    op.execute("CREATE TYPE IF NOT EXISTS paymenttype AS ENUM ('entry_fee', 'prize_payout', 'refund')")
+    op.execute("CREATE TYPE IF NOT EXISTS paymentstatus AS ENUM ('pending', 'completed', 'failed', 'refunded')")
 
     # 1. Create users table
     op.create_table(
@@ -36,7 +36,7 @@ def upgrade() -> None:
         sa.Column('username', sa.String(length=100), nullable=False),
         sa.Column('hashed_password', sa.String(length=255), nullable=False),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='1'),
-        sa.Column('role', sa.Enum('FOUNDER', 'JUDGE', 'ADMIN', name='userrole', create_type=False), nullable=False, server_default='FOUNDER'),
+        sa.Column('role', sa.Enum('founder', 'judge', 'admin', name='userrole', create_type=False), nullable=False, server_default='founder'),
         sa.Column('stripe_customer_id', sa.String(length=255), nullable=True),
         sa.Column('avatar_url', sa.String(length=500), nullable=True),
         sa.Column('stripe_connect_account_id', sa.String(length=255), nullable=True),
@@ -72,7 +72,7 @@ def upgrade() -> None:
         sa.Column('deadline', sa.DateTime(), nullable=False),
         sa.Column('open_date', sa.DateTime(), nullable=False),
         sa.Column('judging_sla_days', sa.Integer(), nullable=False),
-        sa.Column('status', sa.Enum('DRAFT', 'UPCOMING', 'ACTIVE', 'CLOSED', 'JUDGING', 'COMPLETE', name='competitionstatus', create_type=False), nullable=False, server_default='DRAFT'),
+        sa.Column('status', sa.Enum('draft', 'upcoming', 'active', 'closed', 'judging', 'complete', name='competitionstatus', create_type=False), nullable=False, server_default='draft'),
         sa.Column('rubric', sa.JSON(), nullable=False),
         sa.Column('prize_structure', sa.JSON(), nullable=False),
         sa.Column('created_by', sa.Integer(), nullable=False),
@@ -99,7 +99,7 @@ def upgrade() -> None:
         sa.Column('title', sa.String(length=255), nullable=False),
         sa.Column('description', sa.Text(), nullable=False),
         sa.Column('attachments', sa.JSON(), nullable=False, server_default='[]'),
-        sa.Column('status', sa.Enum('DRAFT', 'PENDING_PAYMENT', 'SUBMITTED', 'UNDER_REVIEW', 'WINNER', 'NOT_SELECTED', 'REJECTED', name='submissionstatus', create_type=False), nullable=False, server_default='DRAFT'),
+        sa.Column('status', sa.Enum('draft', 'pending_payment', 'submitted', 'under_review', 'winner', 'not_selected', 'rejected', name='submissionstatus', create_type=False), nullable=False, server_default='draft'),
         sa.Column('is_public', sa.Boolean(), nullable=False, server_default='0'),
         sa.Column('ai_scores', sa.JSON(), nullable=True),
         sa.Column('human_scores', sa.JSON(), nullable=True),
@@ -131,8 +131,8 @@ def upgrade() -> None:
         sa.Column('competition_id', sa.Integer(), nullable=False),
         sa.Column('submission_id', sa.Integer(), nullable=True),
         sa.Column('amount', sa.Numeric(precision=10, scale=2), nullable=False),
-        sa.Column('type', sa.Enum('ENTRY_FEE', 'PRIZE_PAYOUT', 'REFUND', name='paymenttype', create_type=False), nullable=False),
-        sa.Column('status', sa.Enum('PENDING', 'COMPLETED', 'FAILED', 'REFUNDED', name='paymentstatus', create_type=False), nullable=False, server_default='PENDING'),
+        sa.Column('type', sa.Enum('entry_fee', 'prize_payout', 'refund', name='paymenttype', create_type=False), nullable=False),
+        sa.Column('status', sa.Enum('pending', 'completed', 'failed', 'refunded', name='paymentstatus', create_type=False), nullable=False, server_default='pending'),
         sa.Column('stripe_payment_intent_id', sa.String(length=255), nullable=True),
         sa.Column('stripe_transfer_id', sa.String(length=255), nullable=True),
         sa.Column('processed_at', sa.DateTime(), nullable=True),
