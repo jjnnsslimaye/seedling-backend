@@ -77,9 +77,10 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        # Acquire advisory lock to prevent concurrent migration runs
+        # Acquire advisory lock at connection level (outside transaction)
         # Lock ID 1234567890 is arbitrary but must be consistent
         connection.execute(text("SELECT pg_advisory_lock(1234567890)"))
+        connection.commit()
         try:
             context.configure(
                 connection=connection, target_metadata=target_metadata
@@ -89,6 +90,7 @@ def run_migrations_online() -> None:
                 context.run_migrations()
         finally:
             connection.execute(text("SELECT pg_advisory_unlock(1234567890)"))
+            connection.commit()
 
 
 if context.is_offline_mode():
