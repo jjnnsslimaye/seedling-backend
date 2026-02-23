@@ -47,7 +47,8 @@ class Payment(Base):
     )
     status: Mapped[PaymentStatus] = mapped_column(
         Enum(PaymentStatus, create_type=False),
-        default=PaymentStatus.PENDING,
+        default=PaymentStatus.PENDING.value,
+        server_default='pending',
         nullable=False,
         index=True
     )

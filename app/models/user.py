@@ -25,7 +25,8 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, create_type=False),
-        default=UserRole.FOUNDER,
+        default=UserRole.FOUNDER.value,
+        server_default='founder',
         nullable=False,
         index=True
     )
