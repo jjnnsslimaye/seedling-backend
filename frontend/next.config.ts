@@ -1,3 +1,4 @@
+// Next.js configuration for Seedling frontend
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
