@@ -51,7 +51,7 @@ class Competition(Base):
 
     # Status
     status: Mapped[CompetitionStatus] = mapped_column(
-        Enum(CompetitionStatus, create_type=False),
+        Enum(CompetitionStatus, values_callable=lambda x: [e.value for e in x], create_type=False),
         default=CompetitionStatus.DRAFT.value,
         server_default='draft',
         nullable=False,

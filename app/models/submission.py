@@ -43,7 +43,7 @@ class Submission(Base):
 
     # Status
     status: Mapped[SubmissionStatus] = mapped_column(
-        Enum(SubmissionStatus, create_type=False),
+        Enum(SubmissionStatus, values_callable=lambda x: [e.value for e in x], create_type=False),
         default=SubmissionStatus.DRAFT.value,
         server_default='draft',
         nullable=False,

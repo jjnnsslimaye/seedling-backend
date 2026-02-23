@@ -402,10 +402,10 @@ async def update_submission(
                     logger.info(f"Payment {existing_payment.id} already succeeded in Stripe, syncing DB")
 
                     # Update our DB to match Stripe reality
-                    existing_payment.status = PaymentStatus.COMPLETED
+                    existing_payment.status = PaymentStatus.COMPLETED.value
                     existing_payment.processed_at = datetime.utcnow()
 
-                    update_data["status"] = SubmissionStatus.SUBMITTED
+                    update_data["status"] = SubmissionStatus.SUBMITTED.value
                     update_data["submitted_at"] = datetime.utcnow()
 
                     # Update competition stats (since webhook didn't run)
@@ -445,7 +445,7 @@ async def update_submission(
                     payment_intent_client_secret = stripe_intent.client_secret
 
                     # Set status to PENDING_PAYMENT
-                    update_data["status"] = SubmissionStatus.PENDING_PAYMENT
+                    update_data["status"] = SubmissionStatus.PENDING_PAYMENT.value
                     update_data["submitted_at"] = datetime.utcnow()
 
                     # Don't create new payment record, use existing
@@ -474,7 +474,7 @@ async def update_submission(
                 payment_intent_client_secret = payment_intent.client_secret
 
                 # Set status to PENDING_PAYMENT (NOT SUBMITTED)
-                update_data["status"] = SubmissionStatus.PENDING_PAYMENT
+                update_data["status"] = SubmissionStatus.PENDING_PAYMENT.value
                 update_data["submitted_at"] = datetime.utcnow()
 
                 # Create Payment record
@@ -612,7 +612,7 @@ async def create_submission_payment_intent(
     db.add(db_payment)
 
     # Update submission status to PENDING_PAYMENT
-    submission.status = SubmissionStatus.PENDING_PAYMENT
+    submission.status = SubmissionStatus.PENDING_PAYMENT.value
     submission.submitted_at = datetime.utcnow()
 
     # Commit all changes atomically
@@ -698,12 +698,12 @@ async def check_submission_payment_status(
     # Check if payment succeeded in Stripe
     if payment_intent.status == "succeeded":
         # Update submission to SUBMITTED
-        submission.status = SubmissionStatus.SUBMITTED
+        submission.status = SubmissionStatus.SUBMITTED.value
         if not submission.submitted_at:
             submission.submitted_at = datetime.utcnow()
 
         # Update payment to COMPLETED
-        payment.status = PaymentStatus.COMPLETED
+        payment.status = PaymentStatus.COMPLETED.value
 
         # Update competition stats (since webhook didn't fire)
         result = await db.execute(
@@ -753,7 +753,7 @@ async def check_submission_payment_status(
 
     elif payment_intent.status == "canceled":
         # Update payment to FAILED
-        payment.status = PaymentStatus.FAILED
+        payment.status = PaymentStatus.FAILED.value
         await db.commit()
 
         return {

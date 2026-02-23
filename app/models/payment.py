@@ -41,12 +41,12 @@ class Payment(Base):
 
     # Payment type and status
     type: Mapped[PaymentType] = mapped_column(
-        Enum(PaymentType, create_type=False),
+        Enum(PaymentType, values_callable=lambda x: [e.value for e in x], create_type=False),
         nullable=False,
         index=True
     )
     status: Mapped[PaymentStatus] = mapped_column(
-        Enum(PaymentStatus, create_type=False),
+        Enum(PaymentStatus, values_callable=lambda x: [e.value for e in x], create_type=False),
         default=PaymentStatus.PENDING.value,
         server_default='pending',
         nullable=False,

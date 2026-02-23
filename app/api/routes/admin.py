@@ -687,7 +687,7 @@ async def select_competition_winners(
         submission = submissions_dict[winner.submission_id]
 
         # Update submission
-        submission.status = SubmissionStatus.WINNER
+        submission.status = SubmissionStatus.WINNER.value
         submission.placement = winner.place
         winner_submission_ids.append(submission.id)
 
@@ -722,7 +722,7 @@ async def select_competition_winners(
 
     # Update all non-winners to NOT_SELECTED status
     for submission in non_winners:
-        submission.status = SubmissionStatus.NOT_SELECTED
+        submission.status = SubmissionStatus.NOT_SELECTED.value
 
     # Commit all changes (winners and non-winners)
     await db.commit()

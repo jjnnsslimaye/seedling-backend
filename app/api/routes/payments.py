@@ -140,7 +140,7 @@ async def handle_payment_intent_succeeded(
         return
 
     # Update Payment record
-    payment.status = PaymentStatus.COMPLETED
+    payment.status = PaymentStatus.COMPLETED.value
     payment.processed_at = datetime.utcnow()
 
     # Find related Submission
@@ -152,7 +152,7 @@ async def handle_payment_intent_succeeded(
 
         if submission:
             # Update Submission status to submitted
-            submission.status = SubmissionStatus.SUBMITTED
+            submission.status = SubmissionStatus.SUBMITTED.value
             submission.submitted_at = datetime.utcnow()
 
             # Find related Competition
@@ -213,7 +213,7 @@ async def handle_payment_intent_failed(
         return
 
     # Update Payment record
-    payment.status = PaymentStatus.FAILED
+    payment.status = PaymentStatus.FAILED.value
     payment.processed_at = datetime.utcnow()
 
     await db.commit()
@@ -235,7 +235,7 @@ async def handle_transfer_paid(db: AsyncSession, transfer: dict):
         logger.warning(f"No payment found for transfer {transfer_id}")
         return
 
-    payment.status = PaymentStatus.COMPLETED
+    payment.status = PaymentStatus.COMPLETED.value
     payment.processed_at = datetime.utcnow()
     await db.commit()
 
@@ -259,7 +259,7 @@ async def handle_transfer_failed(db: AsyncSession, transfer: dict):
         logger.warning(f"No payment found for transfer {transfer_id}")
         return
 
-    payment.status = PaymentStatus.FAILED
+    payment.status = PaymentStatus.FAILED.value
     await db.commit()
 
     logger.error(f"Payment {payment.id} marked as FAILED for transfer {transfer_id}")
