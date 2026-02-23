@@ -1005,9 +1005,9 @@ async def distribute_prizes(
 
             # e. Create Payment record
             new_payment = Payment(
-                type=PaymentType.PRIZE_PAYOUT,
+                type=PaymentType.PRIZE_PAYOUT.value,  # Extract lowercase enum value
                 amount=prize_amount,
-                status=PaymentStatus.PENDING,
+                status=PaymentStatus.PENDING.value,  # Extract lowercase enum value
                 stripe_transfer_id=transfer.id,
                 user_id=user.id,
                 competition_id=competition_id,

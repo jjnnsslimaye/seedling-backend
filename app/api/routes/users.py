@@ -101,6 +101,7 @@ async def create_user(
         email=user_data.email.lower(),  # Store email in lowercase
         username=user_data.username.lower(),  # Store username in lowercase
         hashed_password=hashed_password,
+        role=user_data.role.value,  # Extract lowercase enum value
     )
 
     db.add(db_user)

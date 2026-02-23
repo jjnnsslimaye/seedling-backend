@@ -185,7 +185,7 @@ async def create_submission(
         user_id=current_user.id,
         title=submission_data.title,
         description=submission_data.description,
-        status=submission_data.status,
+        status=submission_data.status.value,  # Extract lowercase enum value
     )
 
     db.add(db_submission)
@@ -484,8 +484,8 @@ async def update_submission(
                     competition_id=competition.id,
                     amount=competition.entry_fee,
                     stripe_payment_intent_id=payment_intent.id,
-                    status=PaymentStatus.PENDING,
-                    type=PaymentType.ENTRY_FEE
+                    status=PaymentStatus.PENDING.value,  # Extract lowercase enum value
+                    type=PaymentType.ENTRY_FEE.value  # Extract lowercase enum value
                 )
                 db.add(db_payment)
 
@@ -605,8 +605,8 @@ async def create_submission_payment_intent(
         competition_id=competition.id,
         submission_id=submission.id,
         amount=competition.entry_fee,
-        type=PaymentType.ENTRY_FEE,
-        status=PaymentStatus.PENDING,
+        type=PaymentType.ENTRY_FEE.value,  # Extract lowercase enum value
+        status=PaymentStatus.PENDING.value,  # Extract lowercase enum value
         stripe_payment_intent_id=payment_intent.id,
     )
     db.add(db_payment)
