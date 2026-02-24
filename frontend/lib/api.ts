@@ -6,6 +6,7 @@ import axios from 'axios';
 import { getToken } from './auth';
 
 // Create axios instance with base configuration
+console.log('API Base URL:', process.env.NEXT_PUBLIC_API_URL);
 export const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/v1`,
   headers: {
