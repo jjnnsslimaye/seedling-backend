@@ -65,7 +65,7 @@ export async function getCompetitions(
     console.log('Fetching competitions with params:', params);
   }
 
-  const response = await api.get<Competition[]>('/competitions', {
+  const response = await api.get<Competition[]>('/competitions/', {
     params,
   });
 
