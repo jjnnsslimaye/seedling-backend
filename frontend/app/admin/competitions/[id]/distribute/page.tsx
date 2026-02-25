@@ -224,7 +224,7 @@ function DistributePrizesContent() {
             Competition Financial Summary
           </h2>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Entry Fee:</span>
               <span className="font-semibold text-gray-900">

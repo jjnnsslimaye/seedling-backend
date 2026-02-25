@@ -660,7 +660,7 @@ function CreateCompetitionContent() {
             <div className="space-y-3">
               {prizes.map((prize, index) => (
                 <div key={index} className="border border-gray-200 rounded-md p-4">
-                  <div className="grid grid-cols-12 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div className="col-span-5">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Place *

@@ -699,7 +699,7 @@ function AssignJudgesContent() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 bg-brand-50 rounded-lg border border-brand-200">
                       <p className="text-sm text-brand-600 font-medium">Total Submissions</p>
                       <p className="text-2xl font-bold text-brand-900 mt-1">
