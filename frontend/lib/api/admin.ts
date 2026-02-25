@@ -23,7 +23,7 @@ export interface CreateCompetitionRequest {
  * Get all competitions for admin view
  */
 export async function getAdminCompetitions(): Promise<Competition[]> {
-  const response = await api.get('/competitions');
+  const response = await api.get('/competitions/');
   return response.data;
 }
 
@@ -31,7 +31,7 @@ export async function getAdminCompetitions(): Promise<Competition[]> {
  * Create a new competition
  */
 export async function createCompetition(data: CreateCompetitionRequest): Promise<Competition> {
-  const response = await api.post('/competitions', data);
+  const response = await api.post('/competitions/', data);
   return response.data;
 }
 
@@ -130,7 +130,7 @@ export async function updateCompetitionDetails(competitionId: number, data: Crea
  * Get all users (for judge assignment)
  */
 export async function getAllUsers() {
-  const response = await api.get('/users');
+  const response = await api.get('/users/');
   return response.data;
 }
 
