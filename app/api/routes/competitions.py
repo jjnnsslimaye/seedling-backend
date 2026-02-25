@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -137,8 +138,8 @@ async def create_competition(
         prize_pool=0,
         platform_fee_percentage=competition_data.platform_fee_percentage,
         max_entries=competition_data.max_entries,
-        deadline=competition_data.deadline,
-        open_date=competition_data.open_date,
+        deadline=competition_data.deadline.replace(tzinfo=None),
+        open_date=competition_data.open_date.replace(tzinfo=None),
         judging_sla_days=competition_data.judging_sla_days,
         rubric=competition_data.rubric,
         prize_structure=competition_data.prize_structure,
@@ -232,6 +233,8 @@ async def update_competition(
     update_data = competition_data.model_dump(exclude_unset=True)
 
     for field, value in update_data.items():
+        if isinstance(value, datetime) and value.tzinfo is not None:
+            value = value.replace(tzinfo=None)
         setattr(competition, field, value)
 
     await db.commit()
