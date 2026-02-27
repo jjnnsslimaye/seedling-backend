@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-green-800">
-                  If that email exists, a reset link has been sent. Check your inbox.
+                  A password reset link has been sent to this email if it's associated with an account. If you don't see the email, check your spam folder.
                 </p>
               </div>
             </div>

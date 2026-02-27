@@ -27,7 +27,7 @@ async def send_password_reset_email(to_email: str, reset_token: str, username: s
           <p>Click the button below to reset your password:</p>
           <div style="margin: 30px 0;">
             <a href="{reset_url}"
-               style="background-color: #4F46E5; color: white; padding: 12px 24px;
+               style="background-color: #16a34a; color: white; padding: 12px 24px;
                       text-decoration: none; border-radius: 6px; display: inline-block;">
               Reset Password
             </a>
@@ -36,8 +36,6 @@ async def send_password_reset_email(to_email: str, reset_token: str, username: s
           <p style="color: #666; font-size: 14px;">{reset_url}</p>
           <p>This link will expire in 1 hour.</p>
           <p>If you didn't request this password reset, you can safely ignore this email.</p>
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
-          <p style="color: #999; font-size: 12px;">Seedling - Competition Platform</p>
         </div>
       </body>
     </html>
