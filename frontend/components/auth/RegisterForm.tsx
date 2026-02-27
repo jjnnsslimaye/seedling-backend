@@ -30,7 +30,7 @@ export default function RegisterForm() {
       console.log('Attempting registration with username:', username, 'email:', email);
 
       // Call registration API
-      const response = await api.post<AuthResponse>('/users', {
+      const response = await api.post<AuthResponse>('/users/', {
         username,
         email,
         password,
