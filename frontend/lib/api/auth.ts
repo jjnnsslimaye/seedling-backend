@@ -29,7 +29,7 @@ export async function requestPasswordReset(email: string): Promise<PasswordReset
  * Reset password with token
  */
 export async function resetPassword(token: string, newPassword: string): Promise<PasswordResetResponse> {
-  const response = await api.post('/auth/reset-password/', {
+  const response = await api.post('/auth/reset-password', {
     token,
     new_password: newPassword,
   });
