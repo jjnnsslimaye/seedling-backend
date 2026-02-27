@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 import secrets
+import logging
 from app.database import get_db
 from app.models.user import User
 from app.models.password_reset_token import PasswordResetToken
@@ -15,6 +16,7 @@ from app.services.email_service import send_password_reset_email
 
 router = APIRouter()
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 
 @router.post("/login", response_model=Token)
@@ -137,9 +139,8 @@ async def request_password_reset(
             username=user.username
         )
     except Exception as e:
-        # Log error but don't reveal to user
-        if settings.debug:
-            print(f"ERROR: Failed to send password reset email: {str(e)}")
+        # Log error for monitoring but don't reveal to user (prevents enumeration)
+        logger.error(f"Failed to send password reset email to {user.email}: {type(e).__name__}: {str(e)}")
 
     return {"message": "If that email exists, a reset link has been sent"}
 
