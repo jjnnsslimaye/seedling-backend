@@ -415,7 +415,7 @@ export default function CompetitionDetailPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-8 py-12">
-        <div className="grid lg:grid-cols-[1fr_350px] gap-12 w-full overflow-hidden">
+        <div className="grid lg:grid-cols-[1fr_350px] gap-12 w-full overflow-hidden items-start">
 
           {/* Left Column - Detailed Information */}
           <div className="space-y-8 min-w-0">
@@ -528,7 +528,7 @@ export default function CompetitionDetailPage() {
           </div>
 
           {/* Right Column - Sticky Prize Pool Card */}
-          <div className="lg:sticky lg:top-8 h-fit space-y-6 min-w-0">
+          <div className="lg:sticky lg:top-8 space-y-6 min-w-0 self-start">
 
             {/* Prize Pool Card - Emphasized */}
             <div className="bg-gradient-to-br from-brand-50 via-green-50 to-brand-100 rounded-2xl p-4 md:p-6 shadow-xl border-2 border-brand-200">
