@@ -427,9 +427,11 @@ export default function CompetitionDetailPage() {
               <div className="mb-8 pb-8 border-b border-slate-100">
                 <h2 className="text-2xl font-bold text-slate-900 mb-4">About This Competition</h2>
                 <div className="max-h-[300px] overflow-y-auto">
-                  <p className="text-lg text-slate-700 leading-relaxed">
-                    {competition.description}
-                  </p>
+                  {competition.description.split('\n').map((line, index) => (
+                    <p key={index} className="text-lg text-slate-700 leading-relaxed mb-2">
+                      {line}
+                    </p>
+                  ))}
                 </div>
               </div>
 
