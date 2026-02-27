@@ -38,15 +38,15 @@ export default function RegisterForm() {
 
       console.log('Registration successful:', response.data);
 
-      // Auto-login with returned token
-      if (response.data.access_token) {
-        login(response.data.access_token);
-        // Redirect to dashboard
-        router.push('/dashboard');
-      } else {
-        // If no token returned, redirect to login
-        router.push('/login?registered=true');
-      }
+      // Auto-login with the credentials just used
+      const loginResponse = await api.post('/auth/login', new URLSearchParams({
+        username,
+        password,
+      }), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      login(loginResponse.data.access_token);
+      router.push('/dashboard');
     } catch (err: any) {
       console.error('Registration error full object:', err);
       console.error('Error response:', err.response);
