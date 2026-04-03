@@ -12,7 +12,9 @@
       "Bash(alembic current:*)",
       "Bash(python3:*)",
       "Bash(curl:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git push:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
